@@ -4,6 +4,11 @@ $App = Invoke-RestMethod -Method GET -Uri "https://graph.microsoft.com/v1.0/appl
 
 If ([string]::IsNullOrEmpty($app.value)) {
     Write-Output "Create new app"
+    $output = "Create new app"
 } else {
     Write-Output "Fix existing"
+    $output = "Fix existing"
 }
+
+$DeploymentScriptOutputs = @{}
+$DeploymentScriptOutputs['AppStatus'] = $output
