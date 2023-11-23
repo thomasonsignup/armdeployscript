@@ -1,15 +1,44 @@
-$Headers = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://graph.microsoft.com/').Token)" }
-$AppDisplayName = "SignupSoftwareAB-ExFlowCloud-FO-72b08bde-b1b7-4138-a615-9f6790947849"
-$App = Invoke-RestMethod -Method GET -Uri "https://graph.microsoft.com/v1.0/applications?`$filter=displayName eq '$($AppDisplayName)'" -Headers $Headers -ContentType "application/json"
-
-If ([string]::IsNullOrEmpty($app.value)) {
-    $output = "Create new app"
-    Write-Output $output
-} else {
-    $output = "Fix existing"
-    Write-Output $output
-    
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "type": "string",
+      "defaultValue": "\\\"John Dole\\\""
+    },
+    "utcValue": {
+      "type": "string",
+      "defaultValue": "[utcNow()]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deploymentScripts",
+      "apiVersion": "2020-10-01",
+      "name": "runPowerShellInlineWithOutput",
+      "location": "[resourceGroup().location]",
+      "kind": "AzurePowerShell",
+      "properties": {
+        "forceUpdateTag": "[parameters('utcValue')]",
+        "azPowerShellVersion": "8.3",
+        "scriptContent": "
+          param([string] $name)
+          $output = \"Hello {0}\" -f $name
+          Write-Output $output
+          $DeploymentScriptOutputs = @{}
+          $DeploymentScriptOutputs['text'] = $output
+        ",
+        "arguments": "[concat('-name', ' ', parameters('name'))]",
+        "timeout": "PT1H",
+        "cleanupPreference": "OnSuccess",
+        "retentionInterval": "P1D"
+      }
+    }
+  ],
+  "outputs": {
+    "result": {
+      "value": "[reference('runPowerShellInlineWithOutput').outputs.text]",
+      "type": "string"
+    }
+  }
 }
-
-$DeploymentScriptOutputs = @{}
-$DeploymentScriptOutputs['AppStatus'] = $output
