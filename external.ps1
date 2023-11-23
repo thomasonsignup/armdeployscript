@@ -1,11 +1,12 @@
 $Headers = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://graph.microsoft.com/').Token)" }
+$EnvOutput = ${Env:AzureADApplicationName}
 if ($EnvOutput) { 
     $EnvOutput = "Environment var exists" 
 }
 else { 
     $EnvOutput = "Environment var no exists" 
 }
-$App = Invoke-RestMethod -Method GET -Uri "https://graph.microsoft.com/v1.0/applications?`$filter=displayName eq '$($AppDisplayName)'" -Headers $Headers -ContentType "application/json"
+$App = Invoke-RestMethod -Method GET -Uri "https://graph.microsoft.com/v1.0/applications?`$filter=displayName eq '$($EnvOutput)'" -Headers $Headers -ContentType "application/json"
 $AppOutput = $app | ConvertTo-Json
 If ([string]::IsNullOrEmpty($app.value)) {
     $output = "Create new app"
