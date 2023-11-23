@@ -2,6 +2,9 @@ $Headers = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://
 $AppDisplayName = "SignupSoftwareAB-ExFlowCloud-FO-72b08bde-b1b7-4138-a615-9f6790947849"
 $EnvOutput = ${Env:AzureADApplicationName}
 Write-output "this is verification"
+Write-Output $EnvOutput
+Write-Output ${Env:AzureADApplicationName}
+Write-Output $Env:AzureADApplicationName
 if (!($EnvOutput)) { 
     $EnvOutput = "no environment output" 
 }
