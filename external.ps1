@@ -1,13 +1,13 @@
 param(
-    [string]$ERP,
+    [string]$Dynamics,
     [string]$TenantId,
     [string]$Appid,
-    [string]$customerUrl,
-    [string]$customerName
+    [string]$customerName,
+    [string]$dnsDomainName
 )
 $Headers = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://graph.microsoft.com/').Token)" }
 $AppDisplayName = "SignupSoftwareAB-ExFlowCloud-$ERP-$TenantId"
-
+$CustomerUrl = "https://" + $customerName + ".$dnsDomainName"
 $App = (Invoke-RestMethod -Method GET -Uri "https://graph.microsoft.com/v1.0/applications?`$filter=displayName eq '$($AppDisplayName)'" -Headers $Headers -ContentType "application/json").value
 
 If (-not($app)) {
