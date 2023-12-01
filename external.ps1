@@ -47,13 +47,13 @@ If (-not($app)) {
 # Add reply URL if not exists 
 If ($app.Web.redirectUris -notcontains $CustomerUrl) {
     $app.Web.redirectUris += $customerUrl
-    $body = @{'web' = @{'redirectUris' = $app.Web.redirectUris } } | ConvertTo-Json
+    $body = @{'web' = @{'redirectUris' = $app.Web.redirectUris } } | ConvertTo-Json -Depth 10
     Invoke-RestMethod -Method PATCH -Uri "https://graph.microsoft.com/v1.0/applications/$($App.id)" -body $body -Headers $Headers -ContentType "application/json"
 }
 
 # Add App Password if not exists
 if ($App.passwordCredentials.displayName -notcontains $customerName) {
-    $body = @{'passwordCredential' = @{'displayName' = $customerName } } | ConvertTo-Json 
+    $body = @{'passwordCredential' = @{'displayName' = $customerName } } | ConvertTo-Json -Depth 10
     $clientSecret = Invoke-RestMethod -Method POST -Uri "https://graph.microsoft.com/v1.0/applications/$($App.id)/addPassword" -body $body -Headers $Headers -ContentType "application/json"
 }
 
