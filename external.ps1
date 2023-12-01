@@ -58,8 +58,9 @@ if ($App.passwordCredentials.displayName -notcontains $customerName) {
 }
 
 # Set secret in KV?
-$body = @{value = $clientSecret.SecretText} | ConvertTo-Json
-Invoke-RestMethod -Method PUT -Uri "https://ec-deploy-intermediate.vault.azure.net/secrets/$customerName" -body $secret -Headers $Headers -ContentType "application/json"
+$KvHeaders = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://vault.azure.net').Token)" }
+$body = @{value = $clientSecret.SecretText; contentType = $clientSecret.keyId} | ConvertTo-Json
+Invoke-RestMethod -Method PUT -Uri "https://ec-deploy-intermediate.vault.azure.net/secrets/$($customerName)?api-version=7.4" -body $body -Headers $KvHeaders -ContentType "application/json"
 $DeploymentScriptOutputs = @{}
 $DeploymentScriptOutputs['ClientId'] = $app.appid
 $DeploymentScriptOutputs['ClientSecret'] = $clientSecret.SecretText
