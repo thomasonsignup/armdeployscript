@@ -6,7 +6,7 @@ param(
     [string]$dnsDomainName
 )
 $Headers = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://graph.microsoft.com/').Token)" }
-$AppDisplayName = "SignupSoftwareAB-ExFlowCloud-$ERP-$TenantId"
+$AppDisplayName = "SignupSoftwareAB-ExFlowCloud-$Dynamics-$TenantId"
 $CustomerUrl = "https://" + $customerName + ".$dnsDomainName/signin-oidc"
 $App = (Invoke-RestMethod -Method GET -Uri "https://graph.microsoft.com/v1.0/applications?`$filter=displayName eq '$($AppDisplayName)'" -Headers $Headers -ContentType "application/json").value
 
