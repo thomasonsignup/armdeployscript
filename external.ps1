@@ -1,10 +1,4 @@
-param(
-    [string]$Dynamics,
-    [string]$TenantId,
-    [string]$Appid,
-    [string]$customerName,
-    [string]$dnsDomainName
-)
+
 $Headers = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://graph.microsoft.com/').Token)" }
 $AppDisplayName = "SignupSoftwareAB-ExFlowCloud-$Dynamics-$TenantId"
 $CustomerUrl = "https://" + $customerName + ".$dnsDomainName/signin-oidc"
