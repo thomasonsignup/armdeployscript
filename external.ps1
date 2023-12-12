@@ -3,11 +3,17 @@ param(
     [string]$TenantId,
     [string]$Appid,
     [string]$customerName,
-    [string]$dnsDomainName
+    [string]$dnsDomainName,
+    [string]$WebVersionName
 )
 $Headers = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://graph.microsoft.com/').Token)" }
 $AppDisplayName = "SignupSoftwareAB-ExFlowCloud-$Dynamics-$TenantId"
-$CustomerUrl = "https://" + $customerName + ".$dnsDomainName/signin-oidc"
+Switch ($WebVersionName) {
+    Vite { $replyUrlEndpoint = "inbox.aspx" }
+    vNext { $replyUrlEndpoint = "signin-oidc" } 
+}
+
+$CustomerUrl = "https://" + $customerName + ".$dnsDomainName/$replyUrlEndpoint"
 $App = (Invoke-RestMethod -Method GET -Uri "https://graph.microsoft.com/v1.0/applications?`$filter=displayName eq '$($AppDisplayName)'" -Headers $Headers -ContentType "application/json").value
 
 If (-not($app)) {
@@ -59,7 +65,7 @@ if ($App.passwordCredentials.displayName -notcontains $customerName) {
 
 # Set secret in KV?
 $KvHeaders = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://vault.azure.net').Token)" }
-$body = @{value = $clientSecret.SecretText; contentType = $clientSecret.keyId} | ConvertTo-Json
+$body = @{value = $clientSecret.SecretText; contentType = $clientSecret.keyId } | ConvertTo-Json
 Invoke-RestMethod -Method PUT -Uri "https://ec-deploy-intermediate.vault.azure.net/secrets/$($customerName)?api-version=7.4" -body $body -Headers $KvHeaders -ContentType "application/json"
 $DeploymentScriptOutputs = @{}
 $DeploymentScriptOutputs['ClientId'] = $app.appid
