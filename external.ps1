@@ -9,7 +9,7 @@ param(
 $Headers = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://graph.microsoft.com/').Token)" }
 $AppDisplayName = "SignupSoftwareAB-ExFlowCloud-$Dynamics-$TenantId"
 Switch ($WebVersionName) {
-    Vite { $replyUrlEndpoint = "inbox.aspx" }
+    vOld { $replyUrlEndpoint = "inbox.aspx" }
     vNext { $replyUrlEndpoint = "signin-oidc" } 
 }
 
