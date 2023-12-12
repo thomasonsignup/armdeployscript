@@ -69,5 +69,6 @@ $body = @{value = $clientSecret.SecretText; contentType = $clientSecret.keyId } 
 Invoke-RestMethod -Method PUT -Uri "https://ec-deploy-intermediate.vault.azure.net/secrets/$($customerName)?api-version=7.4" -body $body -Headers $KvHeaders -ContentType "application/json"
 $DeploymentScriptOutputs = @{}
 $DeploymentScriptOutputs['ClientId'] = $app.appid
+$DeploymentScriptOutputs['AdminConsent'] = "https://login.microsoftonline.com/organizations/v2.0/adminconsent?client_id=$($app.appid)&state=$($customerName + ".$dnsDomainName")&redirect_uri=https://consent.$dnsDomainName&scope=https://erp.dynamics.com/.default"
 $DeploymentScriptOutputs['ClientSecret'] = $clientSecret.SecretText
 $DeploymentScriptOutputs
