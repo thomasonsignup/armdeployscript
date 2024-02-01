@@ -4,7 +4,8 @@ param(
     [string]$Appid,
     [string]$customerName,
     [string]$dnsDomainName,
-    [string]$WebVersionName
+    [string]$WebVersionName,
+    [string]$IntermediateVaultUrl
 )
 $Headers = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://graph.microsoft.com/').Token)" }
 $AppDisplayName = "SignupSoftwareAB-ExFlowCloud-$Dynamics-$TenantId"
@@ -66,7 +67,7 @@ if ($App.passwordCredentials.displayName -notcontains $customerName) {
 # Set secret in KV?
 $KvHeaders = @{Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://vault.azure.net').Token)" }
 $body = @{value = $clientSecret.SecretText; contentType = $clientSecret.keyId } | ConvertTo-Json
-Invoke-RestMethod -Method PUT -Uri "https://ec-deploy-intermediate.vault.azure.net/secrets/$($customerName)?api-version=7.4" -body $body -Headers $KvHeaders -ContentType "application/json"
+Invoke-RestMethod -Method PUT -Uri "$IntermediateVaultUrl/secrets/$($customerName)?api-version=7.4" -body $body -Headers $KvHeaders -ContentType "application/json"
 $DeploymentScriptOutputs = @{}
 $DeploymentScriptOutputs['ClientId'] = $app.appid
 $DeploymentScriptOutputs['AdminConsent'] = "https://login.microsoftonline.com/organizations/v2.0/adminconsent?client_id=$($app.appid)&state=$($customerName + ".$dnsDomainName")&redirect_uri=https://consent.$dnsDomainName&scope=https://erp.dynamics.com/.default"
