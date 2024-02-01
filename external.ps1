@@ -37,7 +37,7 @@ If (-not($app)) {
         'implicitGrantSettings' = @{
             'enableIdTokenIssuance' = 'True'
         }
-        'redirectUris'          = @('https://consent.exflowdev.cloud')
+        'redirectUris'          = @('https://consent.$dnsDomainName')
     }
   
     $AppObject = [pscustomobject]@{
